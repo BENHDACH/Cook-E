@@ -2,3 +2,13 @@
 #myfirst {
     color : blue;
 }
+
+#tmp{
+    position: absolute;
+    right: 0;
+}
+
+#tmpText{
+    position: absolute;
+    right: 25;
+}
