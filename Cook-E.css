@@ -12,3 +12,11 @@
     position: absolute;
     right: 25;
 }
+
+table{
+    width: 80%;
+    border: 1px solid black;
+    padding: 5px;
+    display: auto;
+    align-items: center;
+}
