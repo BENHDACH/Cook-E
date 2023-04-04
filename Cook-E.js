@@ -50,16 +50,18 @@ var jeSuisCuit = false;
             jeSuisCuit = false;
             var limit=100;
             var time=100;
-            var maTemperature = getElementById("My_Temp");
+            var previousTmp = document.getElementById("My_Temp");
+            var maTemperature = previousTmp.innerHTML;
             var stringMessage = "";
+            var message = new Paho.MQTT.Message(stringMessage.toString());
             var monIndice = 0;
 
             var listePlat = [
-                ["oeufDur",20,10000],
+                ["oeufDur",27,10000],
                 ["oeufCoque",25,15000]
-            ]
+            ];
 
-            for(i in Range(0,listePlat.length)){
+            for(let i = 0; i < listePlat.length; i++){
                 if(listePlat[i][0]==nom){
                     monIndice = i;
                 }
@@ -68,7 +70,7 @@ var jeSuisCuit = false;
             limit = listePlat[monIndice][1];
             time = listePlat[monIndice][2];
 
-            if(maTemperature.toInt()==limit){
+            if(parseInt(maTemperature)==limit){
                 //On eteint la led rouge
                 stringMessage = "{\"id\": 3,\"state\": 0}";
                 message = new Paho.MQTT.Message(stringMessage.toString());
@@ -76,25 +78,34 @@ var jeSuisCuit = false;
                 message.retained=true;
                 mqtt.send(message);
 
-                clignotement(true)
-                setTimeout(cooked(), time);
+                clignotement(true);
+                setTimeout(function() {
+                    cooked();
+                }, time);
                 
             //Limite non atteinte
             }else{
+                
                 stringMessage = "{\"id\": 3,\"state\": 1}";
                 message = new Paho.MQTT.Message(stringMessage.toString());
                 message.destinationName = "isen03/led";
                 message.retained=true;
                 mqtt.send(message);
+                console.log("Else cooking");
 
+            
                 //On reboucle (toute les 2s) pour verifier avec la nouvelle temperature
-                setTimeout(recupTemp(nom),2000)
+                setTimeout(function() {
+                    recupTemp(nom);
+                }, 2000);
             }
             
         }
         
         function clignotement(value){
-            
+            var stringMessage = "";
+            var message = new Paho.MQTT.Message(stringMessage.toString());
+
             if(value){
                 stringMessage = "{\"id\": 2,\"state\": 1}";
                 message = new Paho.MQTT.Message(stringMessage.toString());
@@ -109,23 +120,28 @@ var jeSuisCuit = false;
                 mqtt.send(message);
             }
             if(!jeSuisCuit)
-            setTimeout(clignotement(!value),400);
+            setTimeout(function() {
+                clignotement(!value);
+            }, 400);
         }
 
         function cooked(){
             jeSuisCuit = true;
-            stringMessage = "{\"id\": 1,\"state\": 1}";
-            message = new Paho.MQTT.Message(stringMessage.toString());
+            var stringMessage = "{\"id\": 1,\"state\": 1}";
+            var message = new Paho.MQTT.Message(stringMessage.toString());
             message.destinationName = "isen03/led";
             message.retained=true;
             mqtt.send(message);
         }
 
         function recupTemp(nom){
+            console.log("hello world");
             var stringMessage = "{\"request\": 1}";
-            message = new Paho.MQTT.Message(stringMessage.toString());
+            var message = new Paho.MQTT.Message(stringMessage.toString());
             message.destinationName = "isen03/getTemp";
             message.retained=true;
             mqtt.send(message);
-            setTimeout(myCooking(nom),1000);
+            setTimeout(function() {
+                myCooking(nom);
+            }, 1000);
         }
