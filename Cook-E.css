@@ -20,9 +20,22 @@ body{
 }
 
 table{
-    width: 80%;
-    border: 1px solid black;
-    padding: 5px;
+    width: 50%;
+    height: 10%;
+    /*border: 1px solid black;*/
+    /*padding-left: 10px ;
+    padding-right: 50px;
+    display: auto;
+    /*justify-content: center;*/
+    /*padding: 5px;
+    display: auto;*/
+    align-items: center;
+    /*justify-content: space-between;*/
+}
+
+#boutton{
+    /*position: absolute;
+    right: 100%;*/
     display: auto;
     align-items: center;
 }
