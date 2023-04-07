@@ -23,3 +23,8 @@ table{
     display: auto;
     align-items: center;
 }
+
+#myCanvas{
+	background: linear-gradient(to right, rgb(45, 45, 240), rgb(236, 8, 46));
+	opacity : 1;
+}
