@@ -3,7 +3,12 @@ var reconnectTimeout = 2000;
 var host="broker.mqttdashboard.com";
 var port=8000;
 
+var currentNomCooking = "";
+
 var jeSuisCuit = false;
+var tempOK = false;
+var timer = false;
+
         function onFailure(message) {
 			console.log("Connection Attempt to Host "+host+"Failed");
 			setTimeout(MQTTconnect, reconnectTimeout);
@@ -25,10 +30,11 @@ var jeSuisCuit = false;
             }
             else if(msg.destinationName=="isen03/button"){
                 var recupJson = JSON.parse(msg.payloadString.replace(/'/g, "\""));
-                if(recupJson["id"]==1){
-                    
-                }else{
-
+                if(recupJson["id"]==1 && currentNomCooking!="" && !timer){
+                    //On modifie la valeur de tmp imaginaire dans myCooking
+                    myCooking(currentNomCooking,"1");
+                }else if(recupJson["id"]==2 && currentNomCooking!="" && !timer){
+                    myCooking(currentNomCooking,"2");
                 }
             }
 
@@ -44,10 +50,10 @@ var jeSuisCuit = false;
             message.destinationName = "isen03/getTemp";
             message.retained=true;
             mqtt.send(message);
-
-            mySprite("-");
-
+            //mySprite("-");
+            
 	  }
+
 	  function MQTTconnect() {
 		console.log("connecting to "+ host +" "+ port);
 			var x=Math.floor(Math.random() * 10000); 
@@ -63,15 +69,32 @@ var jeSuisCuit = false;
 		 mqtt.connect(options); //connect
 		}
 
-        function myCooking(nom){
+        function myCooking(nom,current){
             //mqtt.subscribe("isen03/led");
-            jeSuisCuit = false;
+            var stringMessage = "";
+            var message = new Paho.MQTT.Message(stringMessage.toString());
+
+            if(current=="3" && tempOK){
+                return ;
+            }
+            else if(current=="0"){
+                tempOK=false;
+                jeSuisCuit = false;
+                //Eteint tout
+
+                for(let i = 1; i <= 3; i++){
+                    setTimeout(function() {
+                        turnOnOff(i,0);
+                    }, i*50);
+                }
+            }
+
+            currentNomCooking = nom;
+            
             var limit=100;
             var time=100;
             var previousTmp = document.getElementById("My_Temp");
             var maTemperature = previousTmp.innerHTML;
-            var stringMessage = "";
-            var message = new Paho.MQTT.Message(stringMessage.toString());
             var monIndice = 0;
 
             var listePlat = [
@@ -96,23 +119,46 @@ var jeSuisCuit = false;
 
             var docIdCuissonT = document.getElementById("Tcuissons");
             var tempsCuisson = document.getElementById("tps");
-            tempsCuisson.innerHTML = "-"+(time/1000)+"s-";
+            if(!timer){
+                tempsCuisson.innerHTML = "-"+(time/1000)+"s-";
+            }
+            
             
             var maCuissonTemperature = parseInt(maTemperature[1]+maTemperature[2])+45;
+
+            if(current=="1" && maCuissonTemperature>limit){
+                maCuissonTemperature = limit;
+            }
+            else if(current=="2" && maCuissonTemperature<limit){
+                maCuissonTemperature = limit;
+            }
+
             docIdCuissonT.innerHTML = "["+maCuissonTemperature+"°]";
 
-            
+
 
             //On donne les chiffre (XY°C) donc X position [1] et Y [2]
             if(maCuissonTemperature==limit){
                 //On eteint la led rouge
-                stringMessage = "{\"id\": 3,\"state\": 0}";
-                message = new Paho.MQTT.Message(stringMessage.toString());
-                message.destinationName = "isen03/led";
-                message.retained=true;
-                mqtt.send(message);
+                setTimeout(function() {
+                    turnOnOff(3,0);
+                }, 350);
 
-                clignotement(true);
+                setTimeout(function(){
+                    mySprite("-");
+                    clignotement(true);
+                },450);
+
+                timer=true;
+                for(let i = 1; i <= time/1000; i++){
+                    setTimeout(function(){
+                        myTimer(time/1000 - i);
+                    },1000*i)
+                }
+                setTimeout(function(){
+                    timer=false;
+                },time);
+                
                 setTimeout(function() {
                     cooked();
                 }, time);
@@ -120,11 +166,9 @@ var jeSuisCuit = false;
             //Limite non atteinte
             }else{
                 
-                stringMessage = "{\"id\": 3,\"state\": 1}";
-                message = new Paho.MQTT.Message(stringMessage.toString());
-                message.destinationName = "isen03/led";
-                message.retained=true;
-                mqtt.send(message);
+                setTimeout(function() {
+                    turnOnOff(3,1);
+                }, 400);
 
                 if(maCuissonTemperature>limit){
                     mySprite(">");
@@ -135,54 +179,66 @@ var jeSuisCuit = false;
 
             
                 //On reboucle (toute les 2s) pour verifier avec la nouvelle temperature
-                setTimeout(function() {
+               /* setTimeout(function() {
                     recupTemp(nom);
-                }, 2000);
+                }, 2000);*/
             }
             
         }
-        
-        function clignotement(value){
-            var stringMessage = "";
-            var message = new Paho.MQTT.Message(stringMessage.toString());
 
-            if(value){
-                stringMessage = "{\"id\": 2,\"state\": 1}";
-                message = new Paho.MQTT.Message(stringMessage.toString());
-                message.destinationName = "isen03/led";
-                message.retained=true;
-                mqtt.send(message);
-            }else{
-                stringMessage = "{\"id\": 2,\"state\": 0}";
-                message = new Paho.MQTT.Message(stringMessage.toString());
-                message.destinationName = "isen03/led";
-                message.retained=true;
-                mqtt.send(message);
-            }
-            if(!jeSuisCuit)
-            setTimeout(function() {
-                clignotement(!value);
-            }, 400);
-        }
-
-        function cooked(){
-            jeSuisCuit = true;
-            var stringMessage = "{\"id\": 1,\"state\": 1}";
-            var message = new Paho.MQTT.Message(stringMessage.toString());
+        function turnOnOff(unNom,state){
+            stringMessage = "{\"id\":"+unNom+",\"state\": "+state+"}";
+            message = new Paho.MQTT.Message(stringMessage.toString());
             message.destinationName = "isen03/led";
             message.retained=true;
             mqtt.send(message);
         }
 
-        function recupTemp(nom){
+        function myTimer(timing){
+            var tempsCuisson = document.getElementById("tps");
+            tempsCuisson.innerHTML = "-"+timing+"s-";
+        }
+        
+        function clignotement(value){
+            tempOK = true;
 
+            if(value){
+                setTimeout(function() {
+                    turnOnOff(2,1);
+                }, 50);
+            }else{
+                setTimeout(function() {
+                    turnOnOff(2,0);
+                }, 50);
+            }
+            if(!jeSuisCuit)
+            setTimeout(function() {
+                clignotement(!value);
+            }, 250);
+        }
+
+        function cooked(){
+            //si le clignotement c'est arrêter sur ON on le OFF au cas où
+            setTimeout(function() {
+                turnOnOff(2,0);
+            }, 750);
+
+            jeSuisCuit = true;
+            setTimeout(function() {
+                turnOnOff(1,1);
+            }, 850);
+            
+
+        }
+
+        function recupTemp(nom){
             var stringMessage = "{\"request\": 1}";
             var message = new Paho.MQTT.Message(stringMessage.toString());
             message.destinationName = "isen03/getTemp";
             message.retained=true;
             mqtt.send(message);
             setTimeout(function() {
-                myCooking(nom);
+                myCooking(nom,"3");
             }, 1000);
         }
 
@@ -204,16 +260,20 @@ var jeSuisCuit = false;
             const canvas = document.getElementById("myCanvas");
             const context = canvas.getContext("2d");
             var x;
+            var sprite = new Sprite((700/2 - 11),0, 11, 16);
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            sprite.draw(context);
+            
            if(verif==">"){
-                x = 700/1.5;
+                sprite.x = 700/1.5;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                sprite.draw(context);
             }else if(verif=="<"){
-                x = 700/3;
-            }
-            else{
-                x = 700/2 - 11;
+                sprite.x = 700/3;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                sprite.draw(context);
             }
             
-            sprite.draw(context);
             
             
         }
