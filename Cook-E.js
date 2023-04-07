@@ -12,8 +12,10 @@ var jeSuisCuit = false;
 			out_msg="Message received "+msg.payloadString+"<br>";
 			out_msg=out_msg+"Message received Topic "+msg.destinationName;
 			console.log(out_msg);
+            //recupJson = JSON.decode(msg.payloadString);
             var text = document.getElementById("My_Temp");
-            text.innerHTML = msg.payloadString[9]+msg.payloadString[10];
+            //text.innerHTML = "("+recupJson["temp"]+"°)";
+            text.innerHTML = "("+msg.payloadString[9]+msg.payloadString[10]+"°)";
             
 
 		}
@@ -57,8 +59,14 @@ var jeSuisCuit = false;
             var monIndice = 0;
 
             var listePlat = [
-                ["oeufDur",27,10000],
-                ["oeufCoque",25,15000]
+                ["oeufDur",70,12000],
+                ["oeufCoque",70,8000],
+                ["steak",71,15000],
+                ["saumon",54,20000],
+                ["cookie",180,10000],
+                ["macaron",160,10000],
+                ["pizzaDeLaMama",200,10000],
+                ["patate",100,10000]
             ];
 
             for(let i = 0; i < listePlat.length; i++){
@@ -70,7 +78,15 @@ var jeSuisCuit = false;
             limit = listePlat[monIndice][1];
             time = listePlat[monIndice][2];
 
-            if(parseInt(maTemperature)==limit){
+            var docIdCuissonT = document.getElementById("Tcuissons");
+            var tempsCuisson = document.getElementById("tps");
+            tempsCuisson.innerHTML = "-"+(time/1000)+"s-";
+            
+            var maCuissonTemperature = parseInt(maTemperature[1]+maTemperature[2])+45;
+            docIdCuissonT.innerHTML = "["+maCuissonTemperature+"°]";
+
+            //On donne les chiffre (XY°C) donc X position [1] et Y [2]
+            if(maCuissonTemperature==limit){
                 //On eteint la led rouge
                 stringMessage = "{\"id\": 3,\"state\": 0}";
                 message = new Paho.MQTT.Message(stringMessage.toString());
