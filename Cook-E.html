@@ -26,21 +26,27 @@
             </tr>
             <tr>
                 <div>
+                    <td><button onclick="myCooking('oeufCoque')" type="button">Cook !</button></td>
                     <td><button onclick="myCooking('oeufDur')" type="button">Cook !</button></td>
-                    <td><button type="button">Cook !</button></td>
-                    <td><button type="button">Cook !</button></td>
-                    <td><button type="button">Cook !</button></td>
-                    <td><button type="button">Cook !</button></td>
-                    <td><button type="button">Cook !</button></td>
-                    <td><button type="button">Cook !</button></td>
-                    <td><button type="button">Cook !</button></td>
+                    <td><button onclick="myCooking('steak')" type="button">Cook !</button></td>
+                    <td><button onclick="myCooking('saumon')" type="button">Cook !</button></td>
+                    <td><button onclick="myCooking('cookie')" type="button">Cook !</button></td>
+                    <td><button onclick="myCooking('macaron')" type="button">Cook !</button></td>
+                    <td><button onclick="myCooking('pizzaDeLaMama')" type="button">Cook !</button></td>
+                    <td><button onclick="myCooking('patate')" type="button">Cook !</button></td>
                 </div>
             </tr>
         </table>
     </CENTER>
     
     <p id="tmpText">T°</p>
-    <p id="My_Temp">Temperature</p>
+    <p id="My_Temp">(°)</p>
+    <p id="Tcuissons">[°]</p>
+    <p id="tps">--</p>
+
+    <canvas id="myCanvas" width="700" height="16" style="border:1px solid #333232">
+        Your browser does not support the HTML5 canvas tag.
+        </canvas>
 
     <script>MQTTconnect();</script>
     
