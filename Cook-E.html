@@ -4,8 +4,9 @@
     </script>
     <script src="./Cook-E.js"></script>
     <!--<H1 style="font-family: Goudy Old Style, Garamond, Big Caslon, Times New Roman, serif;"><CENTER>COOK-E</CENTER></H1>-->
-    
+
     <CENTER><img src="./cookE.png" height="10%" width="20%"></CENTER>
+
 </head>
 <body>
     <!--<p id="myfirst">HELLO WORLD</p>-->
@@ -14,25 +15,39 @@
         <br><br><br>
         <table>
             <tr>
-                <td><img src="https://static.vecteezy.com/system/resources/previews/009/379/806/non_2x/boiled-egg-clipart-design-illustration-free-png.png" height="10%" width="30%"></td>
-                <td><img src="https://pixabay.com/static/uploads/photo/2012/04/05/00/38/egg-25369_640.png" height="30%" width="40%"></td>
-                <td><img src="http://clipart.coolclips.com/480/vectors/tf05308/CoolClips_vc061773.png" height="20%" width="50%"></td>
-                <td><img src="https://justtheforkingrecipe.com/wp-content/uploads/2020/11/salmon-1024x819.png" height="20%" width="40%"></td>
-                <td><img src="https://vectorified.com/image/cookies-vector-png-10.png" height="10%" width="15%"></td>
-                <td><img src="https://image.pbs.org/poster_images/assets/1146d9c9w4f2i4cgvswo.png.resize.710x399.png" height="20%" width="50%"></td>
-                <td><img src="http://miam-images.m.i.pic.centerblog.net/o/108623b0.png" height="20%" width="50%"></td>
-                <td><img src="https://thumbs.dreamstime.com/b/illustration-d-un-sac-de-pommes-de-terre-sur-un-fond-blanc-vecteur-75226638.jpg" height="20%" width="35%"></td>
+                <td><img src="./oeufDur.png" height="120%" width="120%"></td>
+                <td><img src="./oeuf.png" height="120%" width="120%"></td>
+                <td><img src="./steak.png" height="120%" width="120%"></td>
+                <td><img src="./saumon.png" height="120%" width="120%"></td>
+                <td><img src="./cookie.png" height="120%" width="120%"></td>
+                <td><img src="./macaron.png" height="120%" width="120%"></td>
+                <td><img src="./pizza.png" height="120%" width="120%"></td>
+                <td><img src="./pdt.png" height="120%" width="120%"></td>
             </tr>
+            <!--<tr>
+                <div>
+                    <td><button onclick="myCooking('oeufCoque','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('oeufDur','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('steak','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('saumon','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('cookie','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('macaron','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('pizzaDeLaMama','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('patate','0')" type="button">Cook</button></td>
+                </div>
+            </tr>-->
+        </table>
+        <table id="bouton">
             <tr>
                 <div>
-                    <td><button onclick="myCooking('oeufCoque','0')" type="button">Cook !</button></td>
-                    <td><button onclick="myCooking('oeufDur','0')" type="button">Cook !</button></td>
-                    <td><button onclick="myCooking('steak','0')" type="button">Cook !</button></td>
-                    <td><button onclick="myCooking('saumon','0')" type="button">Cook !</button></td>
-                    <td><button onclick="myCooking('cookie','0')" type="button">Cook !</button></td>
-                    <td><button onclick="myCooking('macaron','0')" type="button">Cook !</button></td>
-                    <td><button onclick="myCooking('pizzaDeLaMama','0')" type="button">Cook !</button></td>
-                    <td><button onclick="myCooking('patate','0')" type="button">Cook !</button></td>
+                    <td><button onclick="myCooking('oeufCoque','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('oeufDur','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('steak','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('saumon','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('cookie','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('macaron','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('pizzaDeLaMama','0')" type="button">Cook</button></td>
+                    <td><button onclick="myCooking('patate','0')" type="button">Cook</button></td>
                 </div>
             </tr>
         </table>
@@ -43,9 +58,11 @@
     <p id="Tcuissons">[°]</p>
     <p id="tps">--</p>
 
+    <CENTER>
     <canvas id="myCanvas" width="700" height="16" style="border:1px solid #333232">
         Your browser does not support the HTML5 canvas tag.
         </canvas>
+    </CENTER>
 
     <script>MQTTconnect();</script>
     
