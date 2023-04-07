@@ -1,5 +1,8 @@
 body{
-    background-color: #e0f4e1;
+    /*background-color: #e0f4e1;*/
+    background-image: url("C:/Users/colle/Documents/Life/School/4ème année/Data Communication/Cook-E/fond.png");
+    /*background-repeat: no-repeat;*/
+    background-size: 100%;
 }
 
 #myfirst {
