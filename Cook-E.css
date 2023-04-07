@@ -32,12 +32,23 @@ table{
     align-items: center;
     /*justify-content: space-between;*/
 }
+td{
+    align-items: center;
+   /* justify-content: space-between;
+    justify-content: center;*/
+    text-align: center;
+    margin : 30%;
+}
 
-#boutton{
+#button{
     /*position: absolute;
     right: 100%;*/
-    display: auto;
+    /*border: 1px solid black;*/
+   /* justify-content: space-between;*/
+    /*justify-content: center;*/
+    width: 50%;
     align-items: center;
+    padding : 20px;
 }
 
 #myCanvas{
