@@ -9,15 +9,28 @@ var jeSuisCuit = false;
 var tempOK = false;
 var timer = false;
 
+var monIndice = 0;
+var listePlat = [
+    ["oeufDur",70,12000],
+    ["oeufCoque",70,8000],
+    ["steak",71,15000],
+    ["saumon",54,20000],
+    ["cookie",180,10000],
+    ["macaron",160,10000],
+    ["pizzaDeLaMama",200,10000],
+    ["patate",100,10000]
+];
+
         function onFailure(message) {
-			console.log("Connection Attempt to Host "+host+"Failed");
+			console.log("Echec de connection vers "+host);
 			setTimeout(MQTTconnect, reconnectTimeout);
         }
 		function onMessageArrived(msg){
-			out_msg="Message received "+msg.payloadString+"<br>";
-			out_msg=out_msg+"Message received Topic "+msg.destinationName;
+			out_msg="Message recu: "+msg.payloadString+"<br>";
+			out_msg=out_msg+"Message venant du topic: "+msg.destinationName;
 			console.log(out_msg);
 
+            /* Il y'a 2 subscribe la temperature et les boutons à connaître */
             if(msg.destinationName=="isen03/temp"){
                  try {
                 //On a besoin de "value" au lieu de 'value' ...
@@ -37,12 +50,10 @@ var timer = false;
                     myCooking(currentNomCooking,"2");
                 }
             }
-
-            
 		}
+
 	 	function onConnect() {
-            console.log("Connected ");
-            //mqtt.subscribe("isen03/led");
+            console.log("Connecté");
             mqtt.subscribe("isen03/temp");
             mqtt.subscribe("isen03/button");
             var stringMessage = "{\"request\": 1}";
@@ -55,11 +66,10 @@ var timer = false;
 	  }
 
 	  function MQTTconnect() {
-		console.log("connecting to "+ host +" "+ port);
-			var x=Math.floor(Math.random() * 10000); 
+		console.log("connexion en cours vers "+ host +" au port :"+ port);
+		var x=Math.floor(Math.random() * 10000); 
 		var cname="orderform-"+x;
 		mqtt = new Paho.MQTT.Client(host,port,cname);
-		//document.write("connecting to "+ host);
 		var options = {
 			timeout: 3,
 			onSuccess: onConnect,
@@ -70,71 +80,64 @@ var timer = false;
 		}
 
         function myCooking(nom,current){
-            //mqtt.subscribe("isen03/led");
             var stringMessage = "";
             var message = new Paho.MQTT.Message(stringMessage.toString());
+            var limit=100;
+            var time=100;
 
+            //current = "3" désigne le check retour (de recupTemp()) donc si on est revenue et que la temperature est OK alors on quitte
             if(current=="3" && tempOK){
                 return ;
             }
+            //current = "0" désigne le click sur le button [Cook !] donc initialisation
             else if(current=="0"){
                 tempOK=false;
                 jeSuisCuit = false;
-                //Eteint tout
-
+                //Eteint toute les leds
                 for(let i = 1; i <= 3; i++){
                     setTimeout(function() {
                         turnOnOff(i,0);
                     }, i*50);
                 }
             }
-
+            //On sauvegarde le nom pour un potentiel retour (tant que on ne click pas sur un autre [Cook !] le nom ne change pas)
             currentNomCooking = nom;
             
-            var limit=100;
-            var time=100;
+            
             var previousTmp = document.getElementById("My_Temp");
             var maTemperature = previousTmp.innerHTML;
-            var monIndice = 0;
-
-            var listePlat = [
-                ["oeufDur",70,12000],
-                ["oeufCoque",70,8000],
-                ["steak",71,15000],
-                ["saumon",54,20000],
-                ["cookie",180,10000],
-                ["macaron",160,10000],
-                ["pizzaDeLaMama",200,10000],
-                ["patate",100,10000]
-            ];
+            
+            //On cherche le nom selectionné
 
             for(let i = 0; i < listePlat.length; i++){
                 if(listePlat[i][0]==nom){
                     monIndice = i;
                 }
             }
-
+            //On set la limit de temperature à atteindre à celui du nom, et le tps de cuissons associé.
             limit = listePlat[monIndice][1];
             time = listePlat[monIndice][2];
 
             var docIdCuissonT = document.getElementById("Tcuissons");
             var tempsCuisson = document.getElementById("tps");
+            //Si le timer n'est pas lancer on le start à la valeur de départ (sinon on y touche pas)
             if(!timer){
                 tempsCuisson.innerHTML = "-"+(time/1000)+"s-";
             }
             
-            
+            //Temperature imaginaire de cuisson +45°C
             var maCuissonTemperature = parseInt(maTemperature[1]+maTemperature[2])+45;
 
+            //Si il y'a eu appuye sur le boutton 1 et que la Tmp est au dessus on l'ajuste
             if(current=="1" && maCuissonTemperature>limit){
                 maCuissonTemperature = limit;
             }
+            //Même chose pour le boutton 2 et si elle est en dessous.
             else if(current=="2" && maCuissonTemperature<limit){
                 maCuissonTemperature = limit;
             }
 
             docIdCuissonT.innerHTML = "["+maCuissonTemperature+"°]";
-
 
 
             //On donne les chiffre (XY°C) donc X position [1] et Y [2]
@@ -177,7 +180,6 @@ var timer = false;
                     mySprite("<");
                 }
 
-            
                 //On reboucle (toute les 2s) pour verifier avec la nouvelle temperature
                /* setTimeout(function() {
                     recupTemp(nom);
@@ -211,6 +213,7 @@ var timer = false;
                     turnOnOff(2,0);
                 }, 50);
             }
+            //Tant que la cuisson n'est pas terminé on boucle sur la fonction de clignotement
             if(!jeSuisCuit)
             setTimeout(function() {
                 clignotement(!value);
@@ -222,7 +225,7 @@ var timer = false;
             setTimeout(function() {
                 turnOnOff(2,0);
             }, 750);
-
+            // on allume la LED bleu pour désigner la fin de cuisson
             jeSuisCuit = true;
             setTimeout(function() {
                 turnOnOff(1,1);
@@ -260,7 +263,7 @@ var timer = false;
             const canvas = document.getElementById("myCanvas");
             const context = canvas.getContext("2d");
             var x;
-            var sprite = new Sprite((700/2 - 11),0, 11, 16);
+            var sprite = new Sprite((700/2 - 5),0, 11, 16);
             context.clearRect(0, 0, canvas.width, canvas.height);
             sprite.draw(context);
             
@@ -273,8 +276,6 @@ var timer = false;
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 sprite.draw(context);
             }
-            
-            
             
         }
         window.onload = mySprite;

@@ -11,7 +11,8 @@ body{
 
 #tmp{
     position: absolute;
-    right: 0;
+    top: 39%;
+    left: 75%;
 }
 
 #tmpText{
@@ -55,3 +56,28 @@ td{
 	background: linear-gradient(to right, rgb(45, 45, 240), rgb(236, 8, 46));
 	opacity : 1;
 }
+
+#containerMy_Temp{
+    background-color: rgb(184, 85, 85);
+    width: 650px;
+    margin: auto;
+    
+}
+#containerTcuissons{
+    background-color: rgb(190, 61, 190);
+    width: 650px;
+    margin: auto;
+    
+}
+#padder{
+    padding-bottom: 20px;
+}
+
+#tps {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
