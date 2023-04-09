@@ -48,13 +48,20 @@
             </tr>
         </table>-->
     </CENTER>
-    
-    <p id="tmpText">T°</p>
+   
+    <p id="tmpText">T°</p> 
+    <CENTER id="containerMy_Temp">
     <p id="My_Temp">(°)</p>
+    </CENTER>
+    <CENTER id="containerTcuissons">
     <p id="Tcuissons">[°]</p>
-    <p id="tps">--</p>
-
+    </CENTER>
     <CENTER>
+    <img src="./chrono.png" height="70" width="80"></td>
+    <p id="tps">--</p>
+    </CENTER>
+    <CENTER>
+    <div id="padder"></div>
     <canvas id="myCanvas" width="700" height="16" style="border:1px solid #333232">
         Your browser does not support the HTML5 canvas tag.
         </canvas>
@@ -62,5 +69,4 @@
 
     <script>MQTTconnect();</script>
     
-
 </body>
