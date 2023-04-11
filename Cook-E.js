@@ -85,6 +85,9 @@ var listePlat = [
             var limit=100;
             var time=100;
 
+            var idNom = document.getElementById("nom");
+            idNom.innerHTML = nom ;
+
             //current = "3" désigne le check retour (de recupTemp()) donc si on est revenue et que la temperature est OK alors on quitte
             if(current=="3" && tempOK){
                 return ;
@@ -137,7 +140,12 @@ var listePlat = [
                 maCuissonTemperature = limit;
             }
 
-            docIdCuissonT.innerHTML = "["+maCuissonTemperature+"°]";
+            if(!(parseInt(maTemperature[1]+maTemperature[2]))){
+                docIdCuissonT.innerHTML = "[°]";
+            }
+            else{
+                docIdCuissonT.innerHTML = "["+maCuissonTemperature+"°]";
+            }
 
 
             //On donne les chiffre (XY°C) donc X position [1] et Y [2]
