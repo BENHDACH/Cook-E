@@ -16,9 +16,9 @@ var listePlat = [
     ["steak",71,15000],
     ["saumon",54,20000],
     ["cookie",180,10000],
-    ["macaron",160,10000],
-    ["pizzaDeLaMama",200,10000],
-    ["patate",100,10000]
+    ["macaron",160,30000],
+    ["pizzaDeLaMama",200,15000],
+    ["patate",100,20000]
 ];
 
         function onFailure(message) {
